@@ -68,10 +68,11 @@ class TranscriptionController extends Controller
                         'transcription' => $transcriptionText,
                     ]);
 
-                    return Inertia::render('Transcribe', [
+                    return response()->json([
                         'transcription' => $transcriptionText,
                         'audio_url' => $audioUrl,
                     ]);
+                    
                 } elseif ($pollingResponse->json()['status'] === 'failed') {
                     return Inertia::render('Transcribe', ['error' => 'Transcription failed']);
                 }

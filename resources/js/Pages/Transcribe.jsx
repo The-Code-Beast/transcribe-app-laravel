@@ -1,32 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import React, { useState, useRef, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
-
-// export default function Transcribe() {
-//     return (
-//         <AuthenticatedLayout
-//             header={
-//                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-//                     Dashboard
-//                 </h2>
-//             }
-//         >
-//             <Head title="Dashboard" />
-
-//             <div className="py-12">
-//                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-//                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-//                         <div className="p-6 text-gray-900">
-//                             You're logged in!
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </AuthenticatedLayout>
-//     );
-// }
-
 
 const Transcription = ({ transcription, audio_url, error }) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -40,15 +16,12 @@ const Transcription = ({ transcription, audio_url, error }) => {
     const waveContainerRef = useRef(null);
   
     useEffect(() => {
-      // Initialize WaveSurfer
       waveSurfer.current = WaveSurfer.create({
         container: waveContainerRef.current,
         waveColor: 'gray',
         progressColor: '#74a352',
         cursorColor: 'navy',
       });
-  
-      // Cleanup on component unmount
       return () => waveSurfer.current.destroy();
     }, []);
   
@@ -88,39 +61,44 @@ const Transcription = ({ transcription, audio_url, error }) => {
         waveSurfer.current.playPause();
       }
     };
-  
+
     const uploadAudio = async (audioBlob) => {
       setLoading(true);
       const formData = new FormData();
       formData.append('audio', audioBlob);
-  
-      router.post('transcription.upload', formData, {
-        onSuccess: (page) => {
-          setTranscriptionText(page.props.transcription);
-          setLoading(false);
-        },
-        onError: () => {
-          setTranscriptionText('An error occurred during transcription.');
-          setLoading(false);
-        },
-      });
+      formData.append('language', language); // Include selected language
+
+      try {
+        const response = await axios.post('/transcription/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        
+        setTranscriptionText(response.data.transcription);
+      } catch (error) {
+        setTranscriptionText('An error occurred during transcription.');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
   
     return (
         <AuthenticatedLayout
-        header={
-            <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                Dashboard
-            </h2>
-        }
-    >
-        <Head title="Dashboard" />
+          header={
+              <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                  Dashboard
+              </h2>
+          }
+      >
+          <Head title="Dashboard" />
 
-        <div className="py-12">
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div className="p-6 text-gray-900">
-                    <div>
+          <div className="py-12">
+              <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                  <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                      <div className="p-6 text-gray-900">
+                      <div>
         <h1>Transcription with Audio Visualization</h1>
 
         <label>
@@ -130,7 +108,6 @@ const Transcription = ({ transcription, audio_url, error }) => {
           <option value="es">Spanish</option>
           <option value="fr">French</option>
           <option value="de">German</option>
-          {/* Add more languages supported by AssemblyAI here */}
         </select>
       </label>
   
@@ -154,11 +131,11 @@ const Transcription = ({ transcription, audio_url, error }) => {
         {loading ? <p>Loading transcription...</p> : <p>{transcriptionText}</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </AuthenticatedLayout>
       
     );
   };

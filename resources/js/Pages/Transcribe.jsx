@@ -33,6 +33,7 @@ const Transcription = ({ transcription, audio_url, error }) => {
     const [transcriptionText, setTranscriptionText] = useState(transcription || '');
     const [loading, setLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState(audio_url || null);
+    const [language, setLanguage] = useState('en'); // Default to English
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
     const waveSurfer = useRef(null);
@@ -93,7 +94,7 @@ const Transcription = ({ transcription, audio_url, error }) => {
       const formData = new FormData();
       formData.append('audio', audioBlob);
   
-      router.post(route('transcription.upload'), formData, {
+      router.post('transcription.upload', formData, {
         onSuccess: (page) => {
           setTranscriptionText(page.props.transcription);
           setLoading(false);
@@ -121,6 +122,17 @@ const Transcription = ({ transcription, audio_url, error }) => {
                     <div className="p-6 text-gray-900">
                     <div>
         <h1>Transcription with Audio Visualization</h1>
+
+        <label>
+        Select Language:
+        <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          {/* Add more languages supported by AssemblyAI here */}
+        </select>
+      </label>
   
         <button onClick={startRecording} disabled={isRecording}>
           Start Recording

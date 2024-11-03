@@ -14,6 +14,8 @@ class TranscriptionController extends Controller
     {
         $ASSEMBLY_API_KEY = env('ASSEMBLY_API_KEY');
 
+        $language = $request->input('language', 'en');
+
         if ($request->hasFile('audio')) {
             $audioFile = $request->file('audio');
             $filename = 'audio/' . uniqid() . '.wav';
@@ -40,8 +42,13 @@ class TranscriptionController extends Controller
             }
 
             $assemblyAudioUrl = $uploadResponse->json()['upload_url'];
-            $transcriptResponse = Http::withHeaders(['authorization' => $ASSEMBLY_API_KEY])
-                ->post('https://api.assemblyai.com/v2/transcript', ['audio_url' => $assemblyAudioUrl]);
+             // Request transcription with language option
+            $transcriptResponse = Http::withHeaders([
+                'authorization' => $ASSEMBLY_API_KEY,
+            ])->post('https://api.assemblyai.com/v2/transcript', [
+                'audio_url' => $assemblyAudioUrl,
+                'language_code' => $language, // Pass the selected language
+            ]);
 
             if ($transcriptResponse->failed()) {
                 return Inertia::render('Transcribe', ['error' => 'Failed to start transcription']);

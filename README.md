@@ -2,7 +2,15 @@
 
 nvm use 22.11.0
 
-cd app
+setup .env file
+
+composer install
+
+php artisan migrate
+
+php artisan key:generate
+
+php artisan storage:link
 
 npm run dev
 

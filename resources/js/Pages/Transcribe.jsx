@@ -4,6 +4,9 @@ import axios from 'axios';
 import React, { useState, useRef, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 
+import RecordingButton from '@/Components/RecordingButton';
+import LanguageSelect from '@/Components/LanguageSelect';
+
 const Transcription = ({ transcription, audio_url, error }) => {
     const [isRecording, setIsRecording] = useState(false);
     const [transcriptionText, setTranscriptionText] = useState(transcription || '');
@@ -83,58 +86,79 @@ const Transcription = ({ transcription, audio_url, error }) => {
         setLoading(false);
       }
     };
+
+    const handleLanguageChange = (e) => {
+        setLanguage(e.target.value);
+    };
   
     return (
         <AuthenticatedLayout
           header={
               <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                  Dashboard
+                  Start Transcribing
               </h2>
           }
       >
-          <Head title="Dashboard" />
+          <Head title="Start Transcribing" />
 
-          <div className="py-12">
-              <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                  <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                      <div className="p-6 text-gray-900">
-                      <div>
-        <h1>Transcription with Audio Visualization</h1>
+            <div className="py-12">
+                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-6 ">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6 text-gray-900">
+                        <header class="border-b border-gray-200 bg-gray-50">
+                        <div class="mx-auto max-w-screen-xl px-5 py-8 sm:px-6 sm:py-12 lg:px-8">
+                            <div class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Start Transcribing</h1>
 
-        <label>
-        Select Language:
-        <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-          <option value="en">English</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
-        </select>
-      </label>
-  
-        <button onClick={startRecording} disabled={isRecording}>
-          Start Recording
-        </button>
-        <button onClick={stopRecording} disabled={!isRecording}>
-          Stop Recording
-        </button>
-  
-        <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
-  
-        {audioUrl && (
-          <div>
-            <button onClick={togglePlayPause} style={{ marginTop: '20px' }}>
-              Play / Pause
-            </button>
-          </div>
-        )}
-  
-        {loading ? <p>Loading transcription...</p> : <p>{transcriptionText}</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+                                    <p class="mt-1.5 text-sm text-gray-500">
+                                    Beging recording your transcription...
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center gap-4">
+
+
+                                
+                                <RecordingButton
+                                    startRecording={startRecording}
+                                    stopRecording={stopRecording}
+                                    isRecording={isRecording}
+                                />
+
+                                <LanguageSelect value={language} onChange={handleLanguageChange} />
+                       
+
+
+
+                        
+
+                               
+                                
+                                </div>
+                            </div>
+                        </div>
+                        </header>
+
+                        <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
+
+                        {audioUrl && (
+                            <div>
+                                <button onClick={togglePlayPause} style={{ marginTop: '20px' }}>
+                                Play / Pause
+                                </button>
+                            </div>
+                            )}
+                    
+                            {loading ? <p>Loading transcription...</p> : <p>{transcriptionText}</p>}
+                            {error && <p style={{ color: 'red' }}>{error}</p>}
+                       
+                    </div>
+                </div>
+            </div>
+
+          
+
+         
       </AuthenticatedLayout>
       
     );

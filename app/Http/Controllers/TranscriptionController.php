@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use App\Models\Transcription;
+use App\Models\User;
 
 class TranscriptionController extends Controller
 {
     public function transcribe(Request $request)
     {
         $ASSEMBLY_API_KEY = env('ASSEMBLY_API_KEY');
+
 
         $language = $request->input('language', 'en');
 
@@ -25,6 +27,7 @@ class TranscriptionController extends Controller
 
             $audioPath = Storage::disk('public')->putFileAs('audio', $audioFile, $filename);
             $audioUrl = Storage::disk('public')->url($audioPath);
+
 
 
             $uploadResponse = Http::withHeaders([
@@ -63,9 +66,13 @@ class TranscriptionController extends Controller
                 if ($pollingResponse->json()['status'] === 'completed') {
                     $transcriptionText = $pollingResponse->json()['text'];
 
+                    //clean audio url for database
+                    $cleanAudioUrl = str_replace(config('app.url'), '', $audioUrl);
+
                     Transcription::create([
-                        'audio_url' => $audioUrl,
+                        'audio_url' => $cleanAudioUrl,
                         'transcription' => $transcriptionText,
+                        'user_id' => auth()->id(),
                     ]);
 
                     return response()->json([

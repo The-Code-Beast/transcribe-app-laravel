@@ -12,5 +12,6 @@ class Transcription extends Model
     protected $fillable = [
         'audio_url',
         'transcription',
+        'user_id',
     ];
 }

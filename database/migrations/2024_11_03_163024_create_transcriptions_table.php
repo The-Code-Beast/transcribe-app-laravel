@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('transcriptions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); // Add user_id column
             $table->string('audio_url');
             $table->text('transcription');
             $table->timestamps();
+
+            // Add foreign key constraint
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

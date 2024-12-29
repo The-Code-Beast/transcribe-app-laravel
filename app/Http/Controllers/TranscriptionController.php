@@ -11,6 +11,21 @@ use App\Models\User;
 
 class TranscriptionController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        
+        $transcriptions = Transcription::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+            
+
+        return Inertia::render('Dashboard', [
+            'transcriptions' => $transcriptions,
+        ]);
+    }
+
     public function transcribe(Request $request)
     {
         $ASSEMBLY_API_KEY = env('ASSEMBLY_API_KEY');
@@ -90,4 +105,7 @@ class TranscriptionController extends Controller
 
         return Inertia::render('Transcribe', ['error' => 'No audio file provided']);
     }
+
+
+    
 }

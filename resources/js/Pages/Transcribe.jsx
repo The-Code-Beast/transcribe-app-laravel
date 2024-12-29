@@ -137,14 +137,17 @@ const Transcription = ({ transcription, audio_url, error }) => {
             
             <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
             {audioUrl && (
-              <div>
-                <button onClick={togglePlayPause} style={{ marginTop: '20px' }}>
+              
+              <div className="text-center">
+                <button className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500" onClick={togglePlayPause} style={{ marginTop: '20px' }}>
                   Play / Pause
                 </button>
               </div>
             )}
-            {loading ? <p>Loading transcription...</p> : <p>{transcriptionText}</p>}
+           
+            {loading ? <div className="center-spinner"><img src="loader.gif"  alt="" /></div> :  <p>{transcriptionText}</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            
           </div>
         </div>
       </div>

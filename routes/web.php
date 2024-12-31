@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\TranscriptionController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\AdminMiddleware;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -15,9 +17,6 @@ Route::get('/', function () {
     ]);
 });
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', [TranscriptionController::class, 'index'])->name('dashboard');
 
@@ -33,5 +32,26 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard')->middleware(AdminMiddleware::class);
+
+// Route::middleware(['admin'])->group(function () {
+//     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+// });
+
+Route::middleware([AdminMiddleware::class, 'auth'])->group(function () {
+    Route::get('/admin', [UserController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+});
+
+
+// Route::middleware([AdminMiddleware::class])->group(function () {
+//     Route::get('/admin', [UserController::class, 'index']);
+// });
+// Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    
+// });
 
 require __DIR__.'/auth.php';

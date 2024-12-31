@@ -1,17 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 
 export default function Dashboard({ transcriptions }) {
     const waveSurferRefs = useRef({});
+    const [playingStates, setPlayingStates] = useState({}); // Track play/pause states
 
     useEffect(() => {
         transcriptions.forEach((transcription) => {
             if (!waveSurferRefs.current[transcription.id]) {
                 const container = document.querySelector(`#waveform-${transcription.id}`);
                 if (container) {
-                    waveSurferRefs.current[transcription.id] = WaveSurfer.create({
+                    const waveSurfer = WaveSurfer.create({
                         container,
                         waveColor: '#d1d5db',
                         progressColor: '#4f46e5',
@@ -22,7 +23,17 @@ export default function Dashboard({ transcriptions }) {
                         height: 80,
                     });
 
-                    waveSurferRefs.current[transcription.id].load(transcription.audio_url);
+                    waveSurfer.load(transcription.audio_url);
+
+                    // Attach finish event listener
+                    waveSurfer.on('finish', () => {
+                        setPlayingStates((prevStates) => ({
+                            ...prevStates,
+                            [transcription.id]: false, // Reset to stopped state
+                        }));
+                    });
+
+                    waveSurferRefs.current[transcription.id] = waveSurfer;
                 }
             }
         });
@@ -35,6 +46,17 @@ export default function Dashboard({ transcriptions }) {
             });
         };
     }, [transcriptions]);
+
+    const togglePlayPause = (id) => {
+        const waveSurfer = waveSurferRefs.current[id];
+        if (waveSurfer) {
+            waveSurfer.playPause();
+            setPlayingStates((prevStates) => ({
+                ...prevStates,
+                [id]: waveSurfer.isPlaying(), // Update state based on current play status
+            }));
+        }
+    };
 
     return (
         <AuthenticatedLayout
@@ -62,21 +84,48 @@ export default function Dashboard({ transcriptions }) {
                                 {transcription.transcription || 'No transcription available'}
                             </p>
                             <div id={`waveform-${transcription.id}`} className="w-full mb-4"></div>
+
                             <button
-                                onClick={() =>
-                                    waveSurferRefs.current[transcription.id]?.playPause()
-                                }
-                                className="text-white bg-blue-600 px-4 py-2 mr-2 rounded hover:bg-blue-700"
+                                className="mr-3 inline-flex items-center text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                                onClick={() => togglePlayPause(transcription.id)}
                             >
-                                Play / Pause
-                            </button>
-                            <button
-                                onClick={() =>
-                                    waveSurferRefs.current[transcription.id]?.playPause()
-                                }
-                                className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
-                            >
-                                Share
+                                <span className="text-sm font-medium">
+                                    {playingStates[transcription.id] ? 'Pause' : 'Play'}
+                                </span>
+
+                                {playingStates[transcription.id] ? (
+                                    // Pause icon
+                                    <svg
+                                        className="w-6 h-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M10 9v6m4-6v6"
+                                        />
+                                    </svg>
+                                ) : (
+                                    // Play icon
+                                    <svg
+                                        className="w-6 h-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M14.752 11.168l-5.197-3.012A1 1 0 008 9.012v5.976a1 1 0 001.555.832l5.197-3.012a1 1 0 000-1.664z"
+                                        />
+                                    </svg>
+                                )}
                             </button>
                         </div>
                     ))}

@@ -8,6 +8,8 @@ use App\Http\Controllers\TranscriptionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 
+Route::get('/p/transcription/{id}', [TranscriptionController::class, 'showPublic'])->name('transcription.public');
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -33,11 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard')->middleware(AdminMiddleware::class);
 
-// Route::middleware(['admin'])->group(function () {
-//     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-// });
 
 Route::middleware([AdminMiddleware::class, 'auth'])->group(function () {
     Route::get('/admin', [UserController::class, 'index'])->name('admin.dashboard');
@@ -47,11 +45,6 @@ Route::middleware([AdminMiddleware::class, 'auth'])->group(function () {
 });
 
 
-// Route::middleware([AdminMiddleware::class])->group(function () {
-//     Route::get('/admin', [UserController::class, 'index']);
-// });
-// Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    
-// });
+
 
 require __DIR__.'/auth.php';

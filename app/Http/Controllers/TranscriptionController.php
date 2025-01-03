@@ -107,5 +107,14 @@ class TranscriptionController extends Controller
     }
 
 
+    public function showPublic($id)
+    {
+        $transcription = Transcription::findOrFail($id);
+        return Inertia::render('Transcription', [
+            'transcriptions' => $transcription,
+        ]);
+    }
+
+
     
 }

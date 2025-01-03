@@ -58,6 +58,11 @@ export default function Dashboard({ transcriptions }) {
         }
     };
 
+    const shareTranscription = (id) => {
+        const publicUrl = `${window.location.origin}/p/transcription/${id}`;
+        window.open(publicUrl, '_blank');
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -128,6 +133,26 @@ export default function Dashboard({ transcriptions }) {
                                 
 
                                 )}
+                            </button>
+                            <button
+                                className="inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
+                                onClick={() => shareTranscription(transcription.id)}
+                            >
+                                <span className="text-sm font-medium">Share</span>
+                                <svg
+                                    className="w-6 h-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                    />
+                                </svg>
                             </button>
                         </div>
                     ))}

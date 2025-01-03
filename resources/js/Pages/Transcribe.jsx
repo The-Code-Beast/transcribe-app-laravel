@@ -23,9 +23,9 @@ const Transcription = ({ transcription, audio_url, error }) => {
   useEffect(() => {
     waveSurfer.current = WaveSurfer.create({
       container: waveContainerRef.current,
-      waveColor: 'gray',
-      progressColor: '#74a352',
-      cursorColor: 'navy',
+      waveColor: '#d1d5db',
+      progressColor: '#74A352',
+      cursorColor: '#74A352',
     });
     return () => waveSurfer.current.destroy();
   }, []);

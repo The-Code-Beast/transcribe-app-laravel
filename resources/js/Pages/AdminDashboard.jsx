@@ -53,7 +53,7 @@ export default function AdminDashboard({ users }) {
                                     type="text"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     required
                                 />
                                 {errors.name && <div className="text-red-600">{errors.name}</div>}
@@ -66,7 +66,7 @@ export default function AdminDashboard({ users }) {
                                     type="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     required
                                 />
                                 {errors.email && <div className="text-red-600">{errors.email}</div>}
@@ -79,7 +79,7 @@ export default function AdminDashboard({ users }) {
                                     type="password"
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 />
                                 {errors.password && <div className="text-red-600">{errors.password}</div>}
                             </div>
@@ -91,13 +91,13 @@ export default function AdminDashboard({ users }) {
                                     type="password"
                                     value={data.password_confirmation}
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 />
                                 {errors.password_confirmation && <div className="text-red-600">{errors.password_confirmation}</div>}
                             </div>
 
                             <div className="flex items-center justify-end">
-                                <button type="submit" className="ml-4 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 active:bg-blue-600 disabled:opacity-25 transition">
+                                <button type="submit" className="ml-4 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 active:bg-indigo-600 disabled:opacity-25 transition">
                                     {editingUser ? 'Update User' : 'Add User'}
                                 </button>
                             </div>

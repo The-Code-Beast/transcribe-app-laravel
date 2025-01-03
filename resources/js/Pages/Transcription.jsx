@@ -1,4 +1,4 @@
-import GuestLayout from '@/Layouts/GuestLayout';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
@@ -16,8 +16,8 @@ export default function Dashboard({ transcriptions }) {
                     const waveSurfer = WaveSurfer.create({
                         container,
                         waveColor: '#d1d5db',
-                        progressColor: '#4f46e5',
-                        cursorColor: '#4f46e5',
+                        progressColor: '#74A352',
+                        cursorColor: '#74A352',
                         barWidth: 2,
                         barRadius: 3,
                         responsive: true,
@@ -55,19 +55,16 @@ export default function Dashboard({ transcriptions }) {
         }
     };
 
-    const shareTranscription = (id) => {
-        Inertia.visit(`/public/transcription/${id}`);
-    };
-
+ 
     const transcriptionArray = Array.isArray(transcriptions) ? transcriptions : [transcriptions];
 
     return (
-        <GuestLayout>
+        <PublicLayout>
             <Head title="Dashboard" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
+                    <div className="bg-white overflow-hidden">
+                        <div className="">
                             {transcriptionArray.map((transcription) => (
                                 <div key={transcription.id} className="mb-8">
                                     <h2 className="text-xl font-bold mb-2">{transcription.title}</h2>
@@ -77,8 +74,10 @@ export default function Dashboard({ transcriptions }) {
                                     <p className="text-gray-700 mb-4 truncate">
                                         {transcription.transcription || 'No transcription available'}
                                     </p>
+                                    <div className='mt-5'></div>
                                     <div id={`waveform-${transcription.id}`} className="w-full mb-4"></div>
-
+                                    <hr />
+                                    <div className='mt-5'></div>
                                     <button
                                         className="mr-3 inline-flex items-center text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring active:text-indigo-500"
                                         onClick={() => togglePlayPause(transcription.id)}
@@ -120,32 +119,13 @@ export default function Dashboard({ transcriptions }) {
                                             </svg>
                                         )}
                                     </button>
-                                    <button
-                                        className="inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
-                                        onClick={() => shareTranscription(transcription.id)}
-                                    >
-                                        <span className="text-sm font-medium">Share</span>
-                                        <svg
-                                            className="w-6 h-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                            />
-                                        </svg>
-                                    </button>
+                                   
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </PublicLayout>
     );
 }

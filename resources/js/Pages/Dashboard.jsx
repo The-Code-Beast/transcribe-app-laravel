@@ -15,8 +15,8 @@ export default function Dashboard({ transcriptions }) {
                     const waveSurfer = WaveSurfer.create({
                         container,
                         waveColor: '#d1d5db',
-                        progressColor: '#4f46e5',
-                        cursorColor: '#4f46e5',
+                        progressColor: '#74A352',
+                        cursorColor: '#74A352',
                         barWidth: 2,
                         barRadius: 3,
                         responsive: true,
@@ -88,10 +88,13 @@ export default function Dashboard({ transcriptions }) {
                             <p className="text-gray-700 mb-4 truncate">
                                 {transcription.transcription || 'No transcription available'}
                             </p>
+                            
                             <div id={`waveform-${transcription.id}`} className="w-full mb-4"></div>
+                            <hr />
+                            <div className="mt-5"></div>
 
                             <button
-                                className="mr-3 inline-flex items-center text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring active:text-indigo-500"
+                                className="mr-3 inline-flex text-xs items-center  text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => togglePlayPause(transcription.id)}
                             >
                                 <span className="text-sm font-medium">
@@ -135,7 +138,7 @@ export default function Dashboard({ transcriptions }) {
                                 )}
                             </button>
                             <button
-                                className="inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
+                                className="inline-flex items-center text-xs gap-2 rounded border border-slate-600 bg-slate-600 px-4 py-2 text-white hover:bg-slate-700 focus:outline-none focus:ring active:text-slate-500"
                                 onClick={() => shareTranscription(transcription.id)}
                             >
                                 <span className="text-sm font-medium">Share</span>

@@ -20,14 +20,14 @@ Route::get('/', function () {
 });
 
 
-Route::get('/dashboard', [TranscriptionController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [TranscriptionController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 
 Route::get('/transcribe', function () {
     return Inertia::render('Transcribe');
 })->middleware(['auth', 'verified'])->name('transcribe');
 
-Route::post('/transcription/upload', [TranscriptionController::class, 'transcribe'])->name('transcription.upload');
+Route::post('/transcription/upload', [TranscriptionController::class, 'transcribe'])->middleware(['auth', 'verified'])->name('transcription.upload');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

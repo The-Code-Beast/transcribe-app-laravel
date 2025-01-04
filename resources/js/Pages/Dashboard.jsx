@@ -72,12 +72,13 @@ export default function Dashboard({ transcriptions }) {
             }
         >
             <Head title="Dashboard" />
-            <div className="py-12 mx-auto max-w-7xl">
+            <div className='py-12'>
+            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <div className="grid grid-cols-1">
                     {transcriptions.map((transcription) => (
                         <div
                             key={transcription.id}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300 mt-4"
+                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300 mb-4"
                         >
                             <h2 className="text-xl font-semibold truncate">
                                 Transcription #{transcription.id}
@@ -160,6 +161,7 @@ export default function Dashboard({ transcriptions }) {
                         </div>
                     ))}
                 </div>
+            </div>
             </div>
         </AuthenticatedLayout>
     );

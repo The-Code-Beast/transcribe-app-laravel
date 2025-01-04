@@ -113,20 +113,20 @@ const Transcription = ({ transcription, audio_url, error }) => {
     >
       <Head title="Start Transcribing" />
       <div className="py-12">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-6">
-          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6 text-gray-900">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+                    <div className="bg-white p-6 shadow sm:rounded-lg">
             <header className="grid grid-cols-5 gap-4">
               
-              <div className="col-span-1">
+              <div className="col-span-5 sm:col-span-1">
               <MicrophoneSelect onMicrophoneChange={handleMicrophoneChange} />
                 
               </div>
               
-              <div className="col-span-1">
+              <div className="col-span-5 sm:col-span-1">
                 <LanguageSelect value={language} onChange={handleLanguageChange} />
               </div>
-              <div className="col-span-1"></div>
-              <div className="col-span-2">
+              <div className="col-span-5 sm:col-span-1"></div>
+              <div className="col-span-5 sm:col-span-2">
                 <RecordingButton
                   startRecording={startRecording}
                   stopRecording={stopRecording}

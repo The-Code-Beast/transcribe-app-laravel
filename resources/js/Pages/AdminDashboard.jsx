@@ -106,7 +106,7 @@ export default function AdminDashboard({ users }) {
 
                     <div className="bg-white p-6 shadow sm:rounded-lg">
                         <h3 className="text-lg font-medium leading-6 text-gray-900">Users</h3>
-                        <div className="mt-6">
+                        <div className="mt-6 overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>

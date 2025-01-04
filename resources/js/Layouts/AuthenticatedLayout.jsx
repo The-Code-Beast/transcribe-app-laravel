@@ -144,6 +144,22 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('transcribe')}
+                            active={route().current('transcribe')}
+                        >
+                            Transcribe
+                        </ResponsiveNavLink>
+
+                        {user.is_admin === 1 && (
+                            <ResponsiveNavLink
+                            href={route('admin.dashboard')}
+                            active={route().current('admin.dashboard')}
+                        >
+                            Admin
+                        </ResponsiveNavLink>
+                                   
+                                )}
                        
                     </div>
 

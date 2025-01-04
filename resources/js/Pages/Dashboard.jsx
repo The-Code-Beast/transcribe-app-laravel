@@ -86,7 +86,7 @@ export default function Dashboard({ transcriptions }) {
                             <p className="text-sm text-gray-500 mb-2">
                                 {new Date(transcription.created_at).toLocaleDateString()}
                             </p>
-                            <p className="text-gray-700 mb-4 truncate">
+                            <p className="text-gray-700 mb-4">
                                 {transcription.transcription || 'No transcription available'}
                             </p>
                             

@@ -84,7 +84,7 @@ class TranscriptionController extends Controller
                     //clean audio url for database
                     $cleanAudioUrl = str_replace(config('app.url'), '', $audioUrl);
 
-                    Transcription::create([
+                    $transcription = Transcription::create([
                         'audio_url' => $cleanAudioUrl,
                         'transcription' => $transcriptionText,
                         'user_id' => auth()->id(),
@@ -93,6 +93,7 @@ class TranscriptionController extends Controller
                     return response()->json([
                         'transcription' => $transcriptionText,
                         'audio_url' => $audioUrl,
+                        'id' => $transcription->id, // Include the transcription ID
                     ]);
                     
                 } elseif ($pollingResponse->json()['status'] === 'failed') {

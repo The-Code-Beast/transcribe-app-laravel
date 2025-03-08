@@ -20,7 +20,20 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        $registrationOpen = env('REGISTRATION_OPEN', false);
+
+        if ($registrationOpen) {
+            // Registration is open
+            return Inertia::render('Auth/Register');
+
+            Route::post('register', [RegisteredUserController::class, 'store']);
+        } else {
+            
+            return Inertia::render('Auth/Login');   
+        }
+       
+        
+       
     }
 
     /**
@@ -30,22 +43,34 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $registrationOpen = env('REGISTRATION_OPEN', false);
 
-        event(new Registered($user));
+        if ($registrationOpen) {
+            // Registration is open
+           $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
 
-        Auth::login($user);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return redirect(route('dashboard', absolute: false));
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect(route('dashboard', absolute: false)); 
+        } else {
+            
+            return redirect(route('dashboard', absolute: false)); 
+        }
+        
+       
+       
     }
 }

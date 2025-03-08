@@ -13,7 +13,7 @@ Route::get('/p/transcription/{id}', [TranscriptionController::class, 'showPublic
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => false,
+        'canRegister' => env('REGISTRATION_OPEN', false),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);

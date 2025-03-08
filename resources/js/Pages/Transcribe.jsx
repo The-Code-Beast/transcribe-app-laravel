@@ -15,6 +15,7 @@ const Transcription = ({ transcription, audio_url, error }) => {
   const [audioUrl, setAudioUrl] = useState(audio_url || null);
   const [language, setLanguage] = useState('en'); // Default to English
   const [selectedMicrophone, setSelectedMicrophone] = useState('');
+  const [transcriptionId, setTranscriptionId] = useState(null);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
   const waveSurfer = useRef(null);
@@ -87,11 +88,23 @@ const Transcription = ({ transcription, audio_url, error }) => {
         },
       });
       setTranscriptionText(response.data.transcription);
+      console.log(response.data);
+      setTranscriptionId(response.data.id); // Assuming the response contains the transcription ID
     } catch (error) {
       setTranscriptionText('An error occurred during transcription.');
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const shareTranscription = () => {
+    if (transcriptionId) {
+      const siteUrl = window.appUrl || 'http://localhost'; // Default to localhost if not set
+      const shareUrl = `${siteUrl}/p/transcription/${transcriptionId}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert('Transcription URL copied to clipboard!');
+      });
     }
   };
 
@@ -136,17 +149,28 @@ const Transcription = ({ transcription, audio_url, error }) => {
             </header>
             
             <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
-            {audioUrl && (
-              
-              <div className="text-center">
-                <button className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500" onClick={togglePlayPause} style={{ marginTop: '20px' }}>
+            <div className="text-center">
+              {audioUrl && (
+                <button
+                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  onClick={togglePlayPause}
+                  style={{ marginTop: '20px' }}
+                >
                   Play / Pause
                 </button>
-              </div>
-            )}
-           
-            {loading ? <div className="center-spinner"><img src="loader.gif"  alt="" /></div> :  <p>{transcriptionText}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+              )}
+              {transcriptionId && (
+                <button
+                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  onClick={shareTranscription}
+                  style={{ marginTop: '20px', marginLeft: '10px' }}
+                >
+                  Share Transcription
+                </button>
+              )}
+            </div>
+            {loading ? <div className="center-spinner"><img src="loader.gif"  alt="" /></div> :  <p className="mt-5">{transcriptionText}</p>}
+            {error && <p className="mt-5" style={{ color: 'red' }}>{error}</p>}
             
           </div>
         </div>

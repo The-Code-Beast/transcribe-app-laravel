@@ -19,4 +19,7 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
+    <script>
+        window.appUrl = "{{ env('APP_URL') }}";
+    </script>
 </html>

@@ -32,7 +32,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Transcribe
                                 </NavLink>
-                                {user.is_admin === 1 && (
+                                {user.is_admin == 1 && (
                                     <NavLink
                                         href={route('admin.dashboard')}
                                         active={route().current('admin.dashboard')}

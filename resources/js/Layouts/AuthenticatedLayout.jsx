@@ -151,7 +151,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             Transcribe
                         </ResponsiveNavLink>
 
-                        {user.is_admin === 1 && (
+                        {user.is_admin == 1 && (
                             <ResponsiveNavLink
                             href={route('admin.dashboard')}
                             active={route().current('admin.dashboard')}

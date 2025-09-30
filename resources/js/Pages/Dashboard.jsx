@@ -2,10 +2,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import axios from 'axios';
 
 export default function Dashboard({ transcriptions }) {
     const waveSurferRefs = useRef({});
     const [playingStates, setPlayingStates] = useState({}); // Track play/pause states
+    const [generatingId, setGeneratingId] = useState(null); // Track ticket generation per transcription
 
     useEffect(() => {
         transcriptions.forEach((transcription) => {
@@ -61,6 +63,24 @@ export default function Dashboard({ transcriptions }) {
     const shareTranscription = (id) => {
         const publicUrl = `${window.location.origin}/p/transcription/${id}`;
         window.open(publicUrl, '_blank');
+    };
+
+    const generateTicket = async (id) => {
+        try {
+            setGeneratingId(id);
+            const response = await axios.post(`/transcription/${id}/generate-ticket`);
+            const { card_url, card_id } = response.data || {};
+            if (card_url) {
+                window.open(card_url, '_blank');
+            } else {
+                alert('Ticket generado, pero no se pudo obtener la URL de Trello.');
+            }
+        } catch (error) {
+            console.error('Error generando ticket:', error);
+            alert('Ocurrió un error al generar el ticket.');
+        } finally {
+            setGeneratingId(null);
+        }
     };
 
     return (
@@ -156,6 +176,22 @@ export default function Dashboard({ transcriptions }) {
                                         strokeWidth={2}
                                         d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                     />
+                                </svg>
+                            </button>
+                            <button
+                                className="ml-3 inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
+                                onClick={() => generateTicket(transcription.id)}
+                                disabled={generatingId === transcription.id}
+                            >
+                                <span className="text-sm font-medium">{generatingId === transcription.id ? 'Generando...' : 'Generar Ticket'}</span>
+                                <svg
+                                    className="w-5 h-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
                                 </svg>
                             </button>
                         </div>

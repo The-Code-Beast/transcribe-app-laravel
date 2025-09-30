@@ -28,6 +28,11 @@ Route::get('/transcribe', function () {
 })->middleware(['auth', 'verified'])->name('transcribe');
 
 Route::post('/transcription/upload', [TranscriptionController::class, 'transcribe'])->middleware(['auth', 'verified'])->name('transcription.upload');
+Route::post('/transcription/{id}/generate-ticket', [TranscriptionController::class, 'generateTicket'])->middleware(['auth', 'verified'])->name('transcription.generateTicket');
+
+Route::get('/trello/boards', [TranscriptionController::class, 'trelloBoards'])->middleware(['auth', 'verified'])->name('trello.boards');
+Route::get('/trello/boards/{boardId}/lists', [TranscriptionController::class, 'trelloBoardLists'])->middleware(['auth', 'verified'])->name('trello.boardLists');
+Route::get('/trello/boards/{boardId}/verify', [TranscriptionController::class, 'trelloBoardVerify'])->middleware(['auth', 'verified'])->name('trello.boardVerify');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

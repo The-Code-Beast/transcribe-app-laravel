@@ -183,7 +183,7 @@ export default function Dashboard({ transcriptions }) {
                                 onClick={() => generateTicket(transcription.id)}
                                 disabled={generatingId === transcription.id}
                             >
-                                <span className="text-sm font-medium">{generatingId === transcription.id ? 'Generando...' : 'Generar Ticket'}</span>
+                                <span className="text-sm font-medium">{generatingId === transcription.id ? 'Generating...' : 'Generate Ticket'}</span>
                                 <svg
                                     className="w-5 h-5"
                                     xmlns="http://www.w3.org/2000/svg"

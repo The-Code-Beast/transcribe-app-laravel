@@ -179,7 +179,7 @@ export default function Dashboard({ transcriptions }) {
                                 </svg>
                             </button>
                             <button
-                                className="ml-3 inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
+                                className="ml-3 inline-flex items-center text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => generateTicket(transcription.id)}
                                 disabled={generatingId === transcription.id}
                             >

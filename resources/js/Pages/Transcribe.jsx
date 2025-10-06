@@ -169,12 +169,11 @@ const Transcription = ({ transcription, audio_url, error }) => {
             </header>
             
             <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
-            <div className="text-center">
+            <div className="text-center flex flex-wrap justify-center gap-2 sm:gap-3">
               {audioUrl && (
                 <button
-                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={togglePlayPause}
-                  style={{ marginTop: '20px' }}
                 >
                   Play / Pause
                 </button>
@@ -182,17 +181,15 @@ const Transcription = ({ transcription, audio_url, error }) => {
               {transcriptionId && (
                 <>
                 <button
-                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={shareTranscription}
-                  style={{ marginTop: '20px', marginLeft: '10px' }}
                 >
                   Share Transcription
                 </button>
                 <button
-                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={generateTicket}
                   disabled={generatingId === transcriptionId}
-                  style={{ marginTop: '20px', marginLeft: '10px' }}
                 >
                   {generatingId === transcriptionId ? 'Generating...' : 'Generate Ticket'}
                 </button>

@@ -111,89 +111,27 @@ export default function Dashboard({ transcriptions }) {
                             </p>
                             
                             <div id={`waveform-${transcription.id}`} className="w-full mb-4"></div>
-                            <hr />
-                            <div className="mt-5"></div>
-
-                            <button
-                                className="mr-3 inline-flex text-xs items-center  text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring active:text-indigo-500"
+                            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => togglePlayPause(transcription.id)}
-                            >
-                                <span className="text-sm font-medium">
-                                    {playingStates[transcription.id] ? 'Pause' : 'Play'}
-                                </span>
-
-                                {playingStates[transcription.id] ? (
-                                    // Pause icon
-                                    <svg
-                                        className="w-6 h-6"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M10 9v6m4-6v6"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <svg
-                                    className="w-6 h-6 text-gray-800 dark:text-white hover:text-indigo-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="#fff"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                                
-
-                                )}
-                            </button>
-                            <button
-                                className="inline-flex items-center text-xs gap-2 rounded border border-slate-600 bg-slate-600 px-4 py-2 text-white hover:bg-slate-700 focus:outline-none focus:ring active:text-slate-500"
+                              >
+                                {playingStates[transcription.id] ? 'Pause' : 'Play'}
+                              </button>
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-slate-600 bg-slate-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-slate-600 focus:outline-none focus:ring active:text-slate-500"
                                 onClick={() => shareTranscription(transcription.id)}
-                            >
-                                <span className="text-sm font-medium">Share</span>
-                                <svg
-                                    className="w-6 h-6"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                    />
-                                </svg>
-                            </button>
-                            <button
-                                className="ml-3 inline-flex items-center text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                              >
+                                Share
+                              </button>
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => generateTicket(transcription.id)}
                                 disabled={generatingId === transcription.id}
-                            >
-                                <span className="text-sm font-medium">{generatingId === transcription.id ? 'Generating...' : 'Generate Ticket'}</span>
-                                <svg
-                                    className="w-5 h-5"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
-                                </svg>
-                            </button>
+                              >
+                                {generatingId === transcription.id ? 'Generating...' : 'Generate Ticket'}
+                              </button>
+                            </div>
                         </div>
                     ))}
                 </div>

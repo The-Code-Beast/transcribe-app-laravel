@@ -172,10 +172,24 @@ const Transcription = ({ transcription, audio_url, error }) => {
             <div className="text-center flex flex-wrap justify-center gap-2 sm:gap-3">
               {audioUrl && (
                 <button
-                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-4 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={togglePlayPause}
                 >
-                  Play / Pause
+                  <span>Play / Pause</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
+                    />
+                  </svg>
                 </button>
               )}
               {transcriptionId && (
@@ -184,14 +198,37 @@ const Transcription = ({ transcription, audio_url, error }) => {
                   className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={shareTranscription}
                 >
-                  Share Transcription
+                  <span>Share Transcription</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
                 </button>
                 <button
                   className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={generateTicket}
                   disabled={generatingId === transcriptionId}
                 >
-                  {generatingId === transcriptionId ? 'Generating...' : 'Generate Ticket'}
+                  <span>{generatingId === transcriptionId ? 'Generating...' : 'Generate Ticket'}</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
+                  </svg>
                 </button>
                 </>
               )}

@@ -8,9 +8,20 @@ export default function Dashboard({ transcriptions }) {
     const waveSurferRefs = useRef({});
     const [playingStates, setPlayingStates] = useState({}); // Track play/pause states
     const [generatingId, setGeneratingId] = useState(null); // Track ticket generation per transcription
+    
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // 5 transcriptions per page
+    
+    // Calculate pagination values
+    const totalItems = transcriptions.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentTranscriptions = transcriptions.slice(startIndex, endIndex);
 
     useEffect(() => {
-        transcriptions.forEach((transcription) => {
+        currentTranscriptions.forEach((transcription) => {
             if (!waveSurferRefs.current[transcription.id]) {
                 const container = document.querySelector(`#waveform-${transcription.id}`);
                 if (container) {
@@ -47,7 +58,7 @@ export default function Dashboard({ transcriptions }) {
                 }
             });
         };
-    }, [transcriptions]);
+    }, [currentTranscriptions]);
 
     const togglePlayPause = (id) => {
         const waveSurfer = waveSurferRefs.current[id];
@@ -83,6 +94,105 @@ export default function Dashboard({ transcriptions }) {
         }
     };
 
+    // Pagination functions
+    const goToPage = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    // Generate page numbers for pagination
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+        
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+        }
+        
+        return pages;
+    };
+
+    // Pagination component
+    const PaginationComponent = () => {
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 p-4 bg-white rounded-lg shadow">
+                {/* Info section */}
+                <div className="text-sm text-gray-700 order-2 sm:order-1">
+                    Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} transcriptions
+                </div>
+                
+                {/* Navigation section */}
+                <div className="flex items-center gap-2 order-1 sm:order-2">
+                    {/* Previous button */}
+                    <button
+                        onClick={goToPrevious}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="hidden sm:inline">Previous</span>
+                        <span className="sm:hidden">‹</span>
+                    </button>
+                    
+                    {/* Page numbers - hidden on mobile, show only on sm+ */}
+                    <div className="hidden sm:flex items-center gap-1">
+                        {getPageNumbers().map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => goToPage(page)}
+                                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                                    page === currentPage
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                                }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    {/* Mobile page indicator */}
+                    <div className="sm:hidden px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+                        {currentPage} / {totalPages}
+                    </div>
+                    
+                    {/* Next button */}
+                    <button
+                        onClick={goToNext}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="hidden sm:inline">Next</span>
+                        <span className="sm:hidden">›</span>
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -95,7 +205,7 @@ export default function Dashboard({ transcriptions }) {
             <div className='py-12'>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <div className="grid grid-cols-1">
-                    {transcriptions.map((transcription) => (
+                    {currentTranscriptions.map((transcription) => (
                         <div
                             key={transcription.id}
                             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300 mb-4"
@@ -174,6 +284,9 @@ export default function Dashboard({ transcriptions }) {
                         </div>
                     ))}
                 </div>
+                
+                {/* Pagination Component */}
+                <PaginationComponent />
             </div>
             </div>
         </AuthenticatedLayout>

@@ -20,6 +20,7 @@ const Transcription = ({ transcription, audio_url, error }) => {
   const audioChunks = useRef([]);
   const waveSurfer = useRef(null);
   const waveContainerRef = useRef(null);
+  const [generatingId, setGeneratingId] = useState(null);
 
   useEffect(() => {
     waveSurfer.current = WaveSurfer.create({
@@ -108,6 +109,25 @@ const Transcription = ({ transcription, audio_url, error }) => {
     }
   };
 
+  const generateTicket = async () => {
+    if (!transcriptionId) return;
+    try {
+      setGeneratingId(transcriptionId);
+      const response = await axios.post(`/transcription/${transcriptionId}/generate-ticket`);
+      const { card_url, card_id } = response.data || {};
+      if (card_url) {
+        window.open(card_url, '_blank');
+      } else {
+        alert('Ticket generado, pero no se pudo obtener la URL de Trello.');
+      }
+    } catch (error) {
+      console.error('Error generando ticket:', error);
+      alert('Ocurrió un error al generar el ticket.');
+    } finally {
+      setGeneratingId(null);
+    }
+  };
+
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
   };
@@ -149,24 +169,68 @@ const Transcription = ({ transcription, audio_url, error }) => {
             </header>
             
             <div ref={waveContainerRef} style={{ width: '100%', height: '200px', marginTop: '20px' }}></div>
-            <div className="text-center">
+            <div className="text-center flex flex-wrap justify-center gap-2 sm:gap-3">
               {audioUrl && (
                 <button
-                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-4 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={togglePlayPause}
-                  style={{ marginTop: '20px' }}
                 >
-                  Play / Pause
+                  <span>Play / Pause</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
+                    />
+                  </svg>
                 </button>
               )}
               {transcriptionId && (
+                <>
                 <button
-                  className="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                   onClick={shareTranscription}
-                  style={{ marginTop: '20px', marginLeft: '10px' }}
                 >
-                  Share Transcription
+                  <span>Share Transcription</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
                 </button>
+                <button
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded border border-indigo-600 bg-indigo-600 px-5 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+                  onClick={generateTicket}
+                  disabled={generatingId === transcriptionId}
+                >
+                  <span>{generatingId === transcriptionId ? 'Generating...' : 'Generate Ticket'}</span>
+                  <svg
+                    className="inline-block w-4 h-4 ml-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
+                  </svg>
+                </button>
+                </>
               )}
             </div>
             {loading ? <div className="center-spinner"><img src="loader.gif"  alt="" /></div> :  <p className="mt-5">{transcriptionText}</p>}

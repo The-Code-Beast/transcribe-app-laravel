@@ -8,9 +8,20 @@ export default function Dashboard({ transcriptions }) {
     const waveSurferRefs = useRef({});
     const [playingStates, setPlayingStates] = useState({}); // Track play/pause states
     const [generatingId, setGeneratingId] = useState(null); // Track ticket generation per transcription
+    
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // 5 transcriptions per page
+    
+    // Calculate pagination values
+    const totalItems = transcriptions.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentTranscriptions = transcriptions.slice(startIndex, endIndex);
 
     useEffect(() => {
-        transcriptions.forEach((transcription) => {
+        currentTranscriptions.forEach((transcription) => {
             if (!waveSurferRefs.current[transcription.id]) {
                 const container = document.querySelector(`#waveform-${transcription.id}`);
                 if (container) {
@@ -47,7 +58,7 @@ export default function Dashboard({ transcriptions }) {
                 }
             });
         };
-    }, [transcriptions]);
+    }, [currentTranscriptions]);
 
     const togglePlayPause = (id) => {
         const waveSurfer = waveSurferRefs.current[id];
@@ -83,6 +94,105 @@ export default function Dashboard({ transcriptions }) {
         }
     };
 
+    // Pagination functions
+    const goToPage = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    // Generate page numbers for pagination
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+        
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+        }
+        
+        return pages;
+    };
+
+    // Pagination component
+    const PaginationComponent = () => {
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 p-4 bg-white rounded-lg shadow">
+                {/* Info section */}
+                <div className="text-sm text-gray-700 order-2 sm:order-1">
+                    Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} transcriptions
+                </div>
+                
+                {/* Navigation section */}
+                <div className="flex items-center gap-2 order-1 sm:order-2">
+                    {/* Previous button */}
+                    <button
+                        onClick={goToPrevious}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="hidden sm:inline">Previous</span>
+                        <span className="sm:hidden">‹</span>
+                    </button>
+                    
+                    {/* Page numbers - hidden on mobile, show only on sm+ */}
+                    <div className="hidden sm:flex items-center gap-1">
+                        {getPageNumbers().map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => goToPage(page)}
+                                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                                    page === currentPage
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                                }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    {/* Mobile page indicator */}
+                    <div className="sm:hidden px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+                        {currentPage} / {totalPages}
+                    </div>
+                    
+                    {/* Next button */}
+                    <button
+                        onClick={goToNext}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="hidden sm:inline">Next</span>
+                        <span className="sm:hidden">›</span>
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -95,7 +205,7 @@ export default function Dashboard({ transcriptions }) {
             <div className='py-12'>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <div className="grid grid-cols-1">
-                    {transcriptions.map((transcription) => (
+                    {currentTranscriptions.map((transcription) => (
                         <div
                             key={transcription.id}
                             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300 mb-4"
@@ -111,92 +221,72 @@ export default function Dashboard({ transcriptions }) {
                             </p>
                             
                             <div id={`waveform-${transcription.id}`} className="w-full mb-4"></div>
-                            <hr />
-                            <div className="mt-5"></div>
-
-                            <button
-                                className="mr-3 inline-flex text-xs items-center  text-xs gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring active:text-indigo-500"
+                            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => togglePlayPause(transcription.id)}
-                            >
-                                <span className="text-sm font-medium">
-                                    {playingStates[transcription.id] ? 'Pause' : 'Play'}
-                                </span>
-
-                                {playingStates[transcription.id] ? (
-                                    // Pause icon
-                                    <svg
-                                        className="w-6 h-6"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M10 9v6m4-6v6"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <svg
-                                    className="w-6 h-6 text-gray-800 dark:text-white hover:text-indigo-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="#fff"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                                
-
-                                )}
-                            </button>
-                            <button
-                                className="inline-flex items-center text-xs gap-2 rounded border border-slate-600 bg-slate-600 px-4 py-2 text-white hover:bg-slate-700 focus:outline-none focus:ring active:text-slate-500"
-                                onClick={() => shareTranscription(transcription.id)}
-                            >
-                                <span className="text-sm font-medium">Share</span>
+                              >
+                                <span>{playingStates[transcription.id] ? 'Pause' : 'Play'}</span>
                                 <svg
-                                    className="w-6 h-6"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
+                                  className="inline-block w-4 h-4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                    />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6l-8-6Z"
+                                  />
                                 </svg>
-                            </button>
-                            <button
-                                className="ml-3 inline-flex items-center text-xs gap-2 rounded border border-green-600 bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring active:text-green-500"
+                              </button>
+
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-slate-600 bg-slate-600 px-4 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-slate-600 focus:outline-none focus:ring active:text-slate-500"
+                                onClick={() => shareTranscription(transcription.id)}
+                              >
+                                <span>Share</span>
+                                <svg
+                                  className="inline-block w-4 h-4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 4a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                  />
+                                </svg>
+                              </button>
+
+                              <button
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded border border-indigo-600 bg-indigo-600 px-4 sm:px-12 py-2 sm:py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
                                 onClick={() => generateTicket(transcription.id)}
                                 disabled={generatingId === transcription.id}
-                            >
-                                <span className="text-sm font-medium">{generatingId === transcription.id ? 'Generando...' : 'Generar Ticket'}</span>
+                              >
+                                <span>{generatingId === transcription.id ? 'Generating...' : 'Generate Ticket'}</span>
                                 <svg
-                                    className="w-5 h-5"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
+                                  className="inline-block w-4 h-4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
                                 >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m-4-4h8" />
                                 </svg>
-                            </button>
+                              </button>
+                            </div>
                         </div>
                     ))}
                 </div>
+                
+                {/* Pagination Component */}
+                <PaginationComponent />
             </div>
             </div>
         </AuthenticatedLayout>

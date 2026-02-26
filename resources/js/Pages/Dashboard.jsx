@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import axios from 'axios';
 
@@ -18,7 +18,10 @@ export default function Dashboard({ transcriptions }) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentTranscriptions = transcriptions.slice(startIndex, endIndex);
+    
+    const currentTranscriptions = useMemo(() => {
+        return transcriptions.slice(startIndex, endIndex);
+    }, [transcriptions, startIndex, endIndex]);
 
     useEffect(() => {
         currentTranscriptions.forEach((transcription) => {
@@ -57,16 +60,21 @@ export default function Dashboard({ transcriptions }) {
                     wavesurfer.destroy();
                 }
             });
+            waveSurferRefs.current = {};
         };
     }, [currentTranscriptions]);
 
     const togglePlayPause = (id) => {
         const waveSurfer = waveSurferRefs.current[id];
         if (waveSurfer) {
-            waveSurfer.playPause();
+            if (waveSurfer.isPlaying()) {
+                waveSurfer.pause();
+            } else {
+                waveSurfer.play();
+            }
             setPlayingStates((prevStates) => ({
                 ...prevStates,
-                [id]: waveSurfer.isPlaying(), // Update state based on current play status
+                [id]: !prevStates[id],
             }));
         }
     };
